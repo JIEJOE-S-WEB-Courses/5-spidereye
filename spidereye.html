@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>spidereye</title>
+    <style>
+        * {
+            font-size: 2vmin;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+            background-color: #171717;
+        }
+
+        #spidereye {
+            position: absolute;
+            width: 35rem;
+        }
+
+    </style>
+</head>
+
+<body>
+    <img id="spidereye" />
+</body>
+<script>
+    // JIEJOE produce
+    // b站主页：https://space.bilibili.com/3546390319860710
+    const spider_eye = {
+        container: document.getElementById("spidereye"),
+        frames: [],
+        max_frames: 73,
+        current_frame: 0,
+        target_frame: 0,
+        spider_timer: {},
+        animation_player: {},
+        init() {
+            for (let i = 0; i <= this.max_frames; i++) {
+                let frame = new Image();
+                frame.src = `./photos/spider eye_${i}.webp`;
+                this.frames.push(frame);
+            };
+            this.container.src = this.frames[0].src;
+        },
+        rotate_eye(x, y) {
+            clearTimeout(this.spider_timer);
+            clearInterval(this.animation_player);
+            let nums = (x - innerWidth / 2) / (y - innerHeight / 2);
+            let rotate_angle;
+            if (y >= innerHeight / 2)
+                rotate_angle = (Math.atan(nums) * 180) / Math.PI + 90;
+            else
+                rotate_angle = 360 - 90 + (Math.atan(nums) * 180) / Math.PI;
+            this.target_frame = parseInt((360 - rotate_angle) / 4.86);
+            this.target_frame = this.target_frame % (this.max_frames + 1);
+            this.container.style.transform = `rotate(${-rotate_angle + 20}deg)`;
+            this.spider_timer = setTimeout(() => {
+                this.animation_player = setInterval(this.spider_move.bind(this), 30);
+            }, 100);
+        },
+        spider_move() {
+            if (this.current_frame != this.target_frame) {
+                let direction = 1;
+                if (this.current_frame >= this.target_frame)
+                    direction = -1;
+                this.current_frame += direction;
+                if (
+                    this.current_frame > this.max_frames ||
+                    this.current_frame < 0
+                )
+                    this.current_frame = 0;
+                this.container.src = this.frames[this.current_frame].src;
+            } else clearInterval(this.animation_player);
+        }
+    };
+    spider_eye.init();
+    window.addEventListener("mousemove", () => {
+        spider_eye.rotate_eye(event.clientX, event.clientY);
+    });
+</script>
+
+</html>
